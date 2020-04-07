@@ -1,0 +1,10 @@
+{% extends 'accounts/base.html' %}
+{% block body_content %}
+{% if users %}
+  {% for profile in users  %}
+      <div><a href = '{% url "accounts:userprofileinfo_detail" profile.pk %}'>{{ profile }}</a></div>
+  {% endfor %}
+{% else %}
+No user are available.
+{% endif %}
+{% endblock %}

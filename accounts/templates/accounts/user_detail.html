@@ -1,0 +1,10 @@
+{% extends 'accounts/base.html' %}
+{% block body_content %}
+<a href='{% url "accounts:update_avatar" user_profile.pk %}'>
+  <img src = "{{ user_profile.profile_pic.url }}" alt="avatar" width="100" height='100' ></img>
+</a>
+<span>{{ user.username }}</span >
+<a href='{% url "accounts:userprofileinfo_update" user.pk %}'>Edit</a>
+<p><a href="{% url 'accounts:userprofileinfo_list' %}">back to the list</a></p>
+
+{% endblock %}
