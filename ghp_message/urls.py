@@ -19,8 +19,9 @@ from accounts import views
 from . import settings
 from django.contrib.staticfiles.urls import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-
+app_name = "ghp-message"
 urlpatterns = [
+    path('auth/', include('social_django.urls', namespace='social')),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('logout', views.user_logout, name='logout'),

@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'messenger.apps.MessengerConfig',
     'accounts.apps.AccountsConfig',
+    'social_django',
+    "sslserver",
 ]
 
 MIDDLEWARE = [
@@ -49,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'ghp_message.urls'
@@ -69,6 +72,14 @@ TEMPLATES = [
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.open_id.OpenIdAuth',
+    'social_core.backends.google.GoogleOpenId',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 WSGI_APPLICATION = 'ghp_message.wsgi.application'
 
@@ -124,3 +135,9 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+SOCIAL_AUTH_FACEBOOK_KEY = '1327513144304719'
+SOCIAL_AUTH_FACEBOOK_SECRET = 'c180a055a84a6baf37eba0dab9fe17e0'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '555076743854-vc0fuetopd3lqdtbfb5d9aas5mg9m4ki.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '_NZOO6i7veHJLfcc7-0GsWvN'

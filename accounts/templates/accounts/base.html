@@ -21,6 +21,8 @@
           {% else %}
             <li><a class="navbar-link" href="{% url 'accounts:sign-up' %}">Register</a></li>
             <li><a class="navbar-link" href="{% url 'accounts:user_login'%}">Login</a></li>
+            <li><a class="navbar-link" href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">Login with facebook</a></li>
+            <li><a class="navbar-link" href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}">Login with Google</a></li>
           {% endif %}
         </ul>
       </div>
