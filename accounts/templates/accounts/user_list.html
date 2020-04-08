@@ -1,9 +1,19 @@
 {% extends 'accounts/base.html' %}
 {% block body_content %}
+<h2> List user </h2>
 {% if users %}
-  {% for profile in users  %}
-      <div><a href = '{% url "accounts:userprofileinfo_detail" profile.pk %}'>{{ profile }}</a></div>
-  {% endfor %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Avatar</th>
+        <th>Username</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody id="new_user">
+      {% include "accounts/includes/users.html" %}
+    </tbody>
+  </table>
 {% else %}
 No user are available.
 {% endif %}
