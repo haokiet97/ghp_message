@@ -1,0 +1,14 @@
+{% for user in users %}
+<tr>
+  <td>
+    {% if user.profile.profile_pic %}
+      <img src = "{{ user.profile.profile_pic.url }}" alt="avatar" width="100" height='100' ></img>
+    {% else %}
+      No avatar 
+    {% endif %}
+  
+  </td>
+	<td><a href = '{% url "accounts:userprofileinfo_detail" user.pk %}'>{{user.username}}</a></td>
+	<td>{{user.email}}</td>
+</tr>
+{% endfor %}

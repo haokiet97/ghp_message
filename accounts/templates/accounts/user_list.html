@@ -1,10 +1,26 @@
 {% extends 'accounts/base.html' %}
+{% load static %}
 {% block body_content %}
+<h2> List user </h2>
 {% if users %}
-  {% for profile in users  %}
-      <div><a href = '{% url "accounts:userprofileinfo_detail" profile.pk %}'>{{ profile }}</a></div>
-  {% endfor %}
+  <div class="col-6 align-left">
+    <i id="search-icon" class="fas fa-search"></i>
+    <input id="user-input" placeholder="Search">
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Avatar</th>
+        <th>Username</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody id="active_user">
+      {% include "accounts/includes/users.html" %}
+    </tbody>
+  </table>
 {% else %}
 No user are available.
 {% endif %}
+<script src="{% static 'js/search_user.js' %}"></script>
 {% endblock %}
