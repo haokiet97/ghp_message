@@ -1,4 +1,5 @@
 {% extends 'accounts/base.html' %}
+{% load static %}
 {% block body_content %}
 <h2> List user </h2>
 {% if users %}
@@ -8,13 +9,16 @@
         <th>Avatar</th>
         <th>Username</th>
         <th>Email</th>
+        <th>Status</th>
       </tr>
     </thead>
-    <tbody id="new_user">
+    <tbody id="active_user">
       {% include "accounts/includes/users.html" %}
     </tbody>
   </table>
 {% else %}
 No user are available.
 {% endif %}
+<script src="{% static 'js/reconnecting-websocket.min.js' %}"></script>
+<script src="{% static "js/channels/active_user.js" %}"></script>
 {% endblock %}

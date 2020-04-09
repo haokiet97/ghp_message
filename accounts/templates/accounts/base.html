@@ -27,9 +27,14 @@
         </ul>
       </div>
     </nav>
+    {% load static %}
     <div class="container">
+    
     {% block body_content %}
+      <script src="{% static 'js/reconnecting-websocket.min.js' %}"></script>
+      <script src="{% static "js/channels/active_user.js" %}"></script>
     {% endblock %}
     </div>
+
   </body>
 </html>

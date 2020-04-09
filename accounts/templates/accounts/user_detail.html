@@ -1,4 +1,5 @@
 {% extends 'accounts/base.html' %}
+{% load static %}
 {% block body_content %}
 <a href='{% url "accounts:update_avatar" user_profile.pk %}'>
   {% if user_profile.profile_pic %}

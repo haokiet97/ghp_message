@@ -29,7 +29,7 @@ def user_login(request):
     user = authenticate(request, username=username, password=password)
     if user:
       login(request, user)
-      return HttpResponseRedirect(reverse('accounts:index'))
+      return HttpResponseRedirect(reverse('accounts:userprofileinfo_list'))
     else:
       return HttpResponse("Invalid")
   else:

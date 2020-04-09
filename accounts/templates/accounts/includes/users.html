@@ -10,5 +10,6 @@
   </td>
 	<td><a href = '{% url "accounts:userprofileinfo_detail" user.pk %}'>{{user.username}}</a></td>
 	<td>{{user.email}}</td>
+  <td>{{user.profile.status}}</td>
 </tr>
 {% endfor %}
