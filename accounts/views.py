@@ -10,6 +10,9 @@ from django.contrib.auth.models import User
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
+from django.template.loader import render_to_string
+from django.http import JsonResponse
+from django.db.models import Q
 
 def index(request):
   return render(request, 'accounts/index.html')
@@ -35,7 +38,7 @@ def user_login(request):
   else:
     return render(request, 'accounts/login.html', {})
 
-def register(request):
+def register(request, backend='django.contrib.auth.backends.ModelBackend'):
   registered = False
   if request.method == 'POST':
     user_form = UserForm(data=request.POST)
@@ -51,7 +54,7 @@ def register(request):
         profile.profile_pic = request.FILES['profile_pic']
       profile.save()
       registered = True 
-      login(request, user)
+      login(request, user, backend='django.contrib.auth.backends.ModelBackend')
       return HttpResponseRedirect(reverse('accounts:index'))
     else:
       print(user_form.errors, profile_form.errors)
@@ -61,12 +64,26 @@ def register(request):
   return render(request, 'accounts/sign-up.html', {'user_form': user_form, 'profile_form': profile_form, 'registered': registered})
 
 def user_list(request):
-  users = User.objects.all()
+  context = {}
+  url_params = request.GET.get("q")
+  if url_params:
+    users = User.objects.filter(Q(username__icontains=url_params) | Q(email__icontains=url_params))
+  else:
+    users = User.objects.all()
+  context["users"] = users
+  
+  if request.is_ajax():
+    html = render_to_string(
+      template_name="accounts/includes/users.html", 
+      context={"users": users}
+      )
+    data_dict = {"html_from_view": html}
+    return JsonResponse(data=data_dict, safe=False)   
   return render(request, 'accounts/user_list.html', {'users': users})
 
 def user_detail(request, pk):
   user = User.objects.get(pk=pk)
-  user_profile = UserProfileInfo.objects.get(user=user)
+  user_profile = user.profile
   return render(request, 'accounts/user_detail.html', {'user': user, 'user_profile': user_profile})
 
 @login_required
@@ -90,7 +107,7 @@ def change_avatar(request, pk):
 @login_required
 def edit_profile(request, pk):
   user = get_object_or_404(User, pk=pk)
-  user_profile = UserProfileInfo.objects.get(user=user)
+  user_profile = user.profile
   if(user == request.user):
     if request.method == 'POST':
       user_form = UserForm(data=request.POST, instance=request.user)
@@ -103,3 +120,4 @@ def edit_profile(request, pk):
     return render(request, 'accounts/edit_profile.html', {'user_form': user_form})
   else:
     return HttpResponse("Invalid")
+
