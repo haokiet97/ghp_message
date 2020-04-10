@@ -51,7 +51,7 @@ class MessengerConsumer(WebsocketConsumer):
             'room_id': str(message.chatroom_id)
         }
 
-    def check_connect(self):
+    def check_connect(self, data):
         content = {
             'command': 'check_connect'
         }

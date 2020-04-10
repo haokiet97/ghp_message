@@ -14,7 +14,7 @@ $(list_contacts).each(function (index, item) {
     let chatSocket = new ReconnectingWebSocket(
         'ws://'
         + window.location.host
-        + '/ws/messenger/'
+        + '/ws/messenger/rooms/'
         + room_id
         + '/'
     );
@@ -70,7 +70,7 @@ $('li.contact').on('click', function () {
         let chatSocket = new ReconnectingWebSocket(
             'ws://'
             + window.location.host
-            + '/ws/messenger/'
+            + '/ws/messenger/rooms/'
             + room_id
             + '/'
         );
@@ -82,7 +82,7 @@ $('li.contact').on('click', function () {
         let chatSocket = new ReconnectingWebSocket(
             'ws://'
             + window.location.host
-            + '/ws/messenger/'
+            + '/ws/messenger/rooms/'
             + room_id
             + '/'
         );

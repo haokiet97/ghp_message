@@ -1,5 +1,5 @@
 $(function(){
-  endpoint = 'ws://127.0.0.1:8000' 
+  endpoint = 'ws://' + window.location.host + "/ws/accounts/"
   var socket =  new ReconnectingWebSocket(endpoint)
   
   socket.onopen = function(e){
