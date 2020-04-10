@@ -9,7 +9,7 @@ from accounts.models import UserProfileInfo
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
-from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 def index(request):
   return render(request, 'accounts/index.html')
@@ -17,7 +17,8 @@ def index(request):
 @login_required
 def special(request):
   return HttpResponse("You are logged in!")
-@login_required
+
+@login_required(login_url=reverse_lazy('accounts:user_login'))
 def user_logout(request):
   logout(request)
   return HttpResponseRedirect(reverse('accounts:index'))
@@ -47,7 +48,6 @@ def register(request, backend='django.contrib.auth.backends.ModelBackend'):
       profile = profile_form.save(commit=False)
       profile.user = user 
       if 'profile_pic' in request.FILES:
-        print('found it')
         profile.profile_pic = request.FILES['profile_pic']
       profile.save()
       registered = True 
@@ -69,7 +69,7 @@ def user_detail(request, pk):
   user_profile = user.profile
   return render(request, 'accounts/user_detail.html', {'user': user, 'user_profile': user_profile})
 
-@login_required
+@login_required(login_url=reverse_lazy('accounts:user_login'))
 def change_avatar(request, pk):
   user_profile = get_object_or_404(UserProfileInfo, pk=pk)
   user = user_profile.user
@@ -82,24 +82,17 @@ def change_avatar(request, pk):
         user_profile.save()
         return render(request, 'accounts/user_detail.html', {'user': user, 'user_profile': user_profile})
     else:
-      profile_form = UserProfileInfoForm()
+      profile_form = UserProfileInfoForm(instance=request.user)
     return render(request, 'accounts/change_avatar.html', {'profile_form': profile_form})
   else:
-    return HttpResponse("invalid")
+    return HttpResponse("You can't update other's avatar")
 
-@login_required
-def edit_profile(request, pk):
-  user = get_object_or_404(User, pk=pk)
-  user_profile = user.profile
-  if(user == request.user):
-    if request.method == 'POST':
-      user_form = UserForm(data=request.POST, instance=request.user)
-      if user_form.is_valid():
-        user_form.save()
-        user_profile.user = user 
-        return render(request, 'accounts/user_detail.html', {'user': user, 'user_profile': user_profile})
-    else:
-      user_form = UserForm()
-    return render(request, 'accounts/edit_profile.html', {'user_form': user_form})
-  else:
-    return HttpResponse("Invalid")
+class UpdateUser(LoginRequiredMixin, generic.UpdateView):
+  login_url = reverse_lazy('accounts:user_login')
+  fields = ['username', 'email', 'password']
+  model = User 
+  template_name = 'accounts/edit_profile.html'
+  def get_success_url(self):   
+    return reverse_lazy('accounts:userprofileinfo_detail', kwargs={'pk': self.object.id})
+  def get_object(self, queryset=None):
+    return self.request.user
