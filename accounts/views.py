@@ -29,13 +29,13 @@ def user_login(request):
     user = authenticate(request, username=username, password=password)
     if user:
       login(request, user)
-      return HttpResponseRedirect(reverse('accounts:index'))
+      return HttpResponseRedirect(reverse('accounts:userprofileinfo_list'))
     else:
       return HttpResponse("Invalid")
   else:
     return render(request, 'accounts/login.html', {})
 
-def register(request):
+def register(request, backend='django.contrib.auth.backends.ModelBackend'):
   registered = False
   if request.method == 'POST':
     user_form = UserForm(data=request.POST)
@@ -51,7 +51,7 @@ def register(request):
         profile.profile_pic = request.FILES['profile_pic']
       profile.save()
       registered = True 
-      login(request, user)
+      login(request, user, backend='django.contrib.auth.backends.ModelBackend')
       return HttpResponseRedirect(reverse('accounts:index'))
     else:
       print(user_form.errors, profile_form.errors)
@@ -66,7 +66,7 @@ def user_list(request):
 
 def user_detail(request, pk):
   user = User.objects.get(pk=pk)
-  user_profile = UserProfileInfo.objects.get(user=user)
+  user_profile = user.profile
   return render(request, 'accounts/user_detail.html', {'user': user, 'user_profile': user_profile})
 
 @login_required
@@ -90,7 +90,7 @@ def change_avatar(request, pk):
 @login_required
 def edit_profile(request, pk):
   user = get_object_or_404(User, pk=pk)
-  user_profile = UserProfileInfo.objects.get(user=user)
+  user_profile = user.profile
   if(user == request.user):
     if request.method == 'POST':
       user_form = UserForm(data=request.POST, instance=request.user)

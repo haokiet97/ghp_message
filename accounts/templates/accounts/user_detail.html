@@ -1,10 +1,14 @@
 {% extends 'accounts/base.html' %}
+{% load static %}
 {% block body_content %}
 <a href='{% url "accounts:update_avatar" user_profile.pk %}'>
-  <img src = "{{ user_profile.profile_pic.url }}" alt="avatar" width="100" height='100' ></img>
+  {% if user_profile.profile_pic %}
+    <img src = "{{ user_profile.profile_pic.url }}" alt="avatar" width="100" height='100' ></img>
+  {% else %}
+    Update avatar 
+  {% endif %}
 </a>
 <span>{{ user.username }}</span >
 <a href='{% url "accounts:userprofileinfo_update" user.pk %}'>Edit</a>
 <p><a href="{% url 'accounts:userprofileinfo_list' %}">back to the list</a></p>
-
 {% endblock %}
