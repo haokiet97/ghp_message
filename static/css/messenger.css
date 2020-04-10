@@ -795,3 +795,8 @@ body {
 #frame .content .message-input .wrap button:focus {
     outline: none;
 }
+
+#frame #sidepanel #contacts ul li.contact span.new-message {
+    border: 2px solid #32465a !important;
+    background: #1068e7;
+}
