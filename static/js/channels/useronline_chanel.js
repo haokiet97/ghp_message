@@ -1,7 +1,15 @@
 // const current_username = JSON.parse(document.getElementById('username').textContent);
+var sk_protocol;
+if(window.location.protocol === 'http:' ){
+    sk_protocol = 'ws:';
+}else {
+    sk_protocol = 'wss:';
+}
+
 
 var userSocket = new ReconnectingWebSocket(
-    'ws://'
+    sk_protocol
+    + '//'
     + window.location.host
     + '/ws/messenger/users/'
 );

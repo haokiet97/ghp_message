@@ -1,4 +1,11 @@
 // const roomid = JSON.parse(document.getElementById('room-id').textContent);
+var sket_protocol;
+if(window.location.protocol === 'http:' ){
+    sket_protocol = 'ws:';
+}else {
+    sket_protocol = 'wss:';
+}
+
 const username = JSON.parse(document.getElementById('username').textContent);
 
 //get list of contacts or chatrooms
@@ -12,7 +19,8 @@ var dict_chatsocket = new Map();
 $(list_contacts).each(function (index, item) {
     let room_id = $(item).attr('id');
     let chatSocket = new ReconnectingWebSocket(
-        'ws://'
+        sket_protocol
+        +'//'
         + window.location.host
         + '/ws/messenger/rooms/'
         + room_id
@@ -68,7 +76,8 @@ $('li.contact').on('click', function () {
     $('.content .messages #chat-log').html('');
     if (dict_chatsocket.get(room_id) == null) {
         let chatSocket = new ReconnectingWebSocket(
-            'ws://'
+            sket_protocol
+            + '//'
             + window.location.host
             + '/ws/messenger/rooms/'
             + room_id
