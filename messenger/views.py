@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError, transaction, DatabaseError
 from django.db.models import Q
-
+from django.urls import reverse
 
 from .models import Message, ChatRoom
 
@@ -13,13 +13,18 @@ User = get_user_model()
 
 
 def index(request):
-    return render(request, 'message/index.html')
+    current_user = request.user
+    users = User.objects.select_related('profile').all()
+    return render(request, 'message/index.html', {
+        'current_user': current_user,
+        'users': users
+    })
 
 
 @login_required
 def room(request):
     current_user = request.user
-    chatrooms = current_user.chatrooms.order_by('-updated_at').all()
+    chatrooms = current_user.chatrooms.prefetch_related('users').order_by('-updated_at').all()
     return render(request, 'message/messenger.html', {
         'current_user': current_user,
         'chatrooms': chatrooms
@@ -36,9 +41,10 @@ def create_room(request, user_id):
             chat_room.save()
             chat_room.users.add(own_user, user)
     except IntegrityError:
-        return redirect("messenger:index")
+        ChatRoom.objects.filter(id=chat_room.id).delete()
+        return redirect("messenger:rooms")
 
-    return redirect("/")
+    return redirect("messenger:index")
 
 
 def room_add_user(request, room_id, user_id):
@@ -51,7 +57,6 @@ def room_add_user(request, room_id, user_id):
     if chatroom.users.filter(Q(id=own_user.id)).exists() and not chatroom.users.filter(Q(id=user_id)).exists():
         chatroom.title+=f', {user.username}'
         chatroom.users.add(user)
-        return redirect("messenger:index")
-
-    return redirect("/")
+        return redirect("messenger:rooms")
+    return redirect(reverse("messenger:index"))
 

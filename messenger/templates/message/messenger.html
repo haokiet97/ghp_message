@@ -1,88 +1,107 @@
 {% extends 'base/base.html' %}
 {% load static %}
-{%  block extrahead %}
-<link rel="stylesheet" href="{% static 'css/messenger.css' %}"/>
+{% block extrahead %}
+    <link rel="stylesheet" href="{% static 'css/messenger.css' %}"/>
+    <style>
+     .navbar-nav{
+            display: block;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-  <div id="frame">
-    <div id="sidepanel">
-      <div id="profile">
-        <div class="wrap">
-          <img id="profile-img" src="http://emilcarlsson.se/assets/mikeross.png" class="online" alt="" />
-          <p>{{ current_user.username }}</p>
-          <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
-          <div id="status-options">
-            <ul>
-              <li id="status-online" class="active"><span class="status-circle"></span> <p>Online</p></li>
-              <li id="status-away"><span class="status-circle"></span> <p>Away</p></li>
-              <li id="status-busy"><span class="status-circle"></span> <p>Busy</p></li>
-              <li id="status-offline"><span class="status-circle"></span> <p>Offline</p></li>
-            </ul>
-          </div>
-          <div id="expanded">
-            <label for="twitter"><i class="fa fa-facebook fa-fw" aria-hidden="true"></i></label>
-            <input name="twitter" type="text" value="mikeross" />
-            <label for="twitter"><i class="fa fa-twitter fa-fw" aria-hidden="true"></i></label>
-            <input name="twitter" type="text" value="ross81" />
-            <label for="twitter"><i class="fa fa-instagram fa-fw" aria-hidden="true"></i></label>
-            <input name="twitter" type="text" value="mike.ross" />
-          </div>
-        </div>
-      </div>
-      <div id="search">
-        <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
-        <input type="text" placeholder="Search contacts..." />
-      </div>
-      <div id="contacts">
-        <ul>
-            {% for chatroom in chatrooms %}
-                <li class="contact" id="{{ chatroom.id }}">
-                    <div class="wrap">
-                        <span class="contact-status online"></span>
-                        <img src="http://emilcarlsson.se/assets/louislitt.png" alt=""/>
-                        <div class="meta">
-                            <p class="name">{{ chatroom.title }}</p>
-                            <p class="preview">{{ chatroom.messages.last.content }}</p>
-                        </div>
+    <div id="frame">
+        <div id="sidepanel">
+            <div id="profile">
+                <div class="wrap">
+                    <img id="profile-img" src="http://emilcarlsson.se/assets/mikeross.png" class="online" alt=""/>
+                    <p>{{ current_user.username }}</p>
+                    <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
+                    <div id="status-options">
+                        <ul>
+                            <li id="status-online" class="active"><span class="status-circle"></span>
+                                <p>Online</p></li>
+                            <li id="status-away"><span class="status-circle"></span>
+                                <p>Away</p></li>
+                            <li id="status-busy"><span class="status-circle"></span>
+                                <p>Busy</p></li>
+                            <li id="status-offline"><span class="status-circle"></span>
+                                <p>Offline</p></li>
+                        </ul>
                     </div>
-                </li>
-            {% endfor %}
-        </ul>
-      </div>
-      <div id="bottom-bar">
-        <button id="addcontact"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add contact</span></button>
-        <button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span></button>
-      </div>
-    </div>
-    <div class="content">
-      <div class="contact-profile">
-        <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
-        <p>{{ username }}</p>
-        <div class="social-media">
-          <i class="fa fa-facebook" aria-hidden="true"></i>
-          <i class="fa fa-twitter" aria-hidden="true"></i>
-          <i class="fa fa-instagram" aria-hidden="true"></i>
+                    <div id="expanded">
+                        <label for="twitter"><i class="fa fa-facebook fa-fw" aria-hidden="true"></i></label>
+                        <input name="twitter" type="text" value="mikeross"/>
+                        <label for="twitter"><i class="fa fa-twitter fa-fw" aria-hidden="true"></i></label>
+                        <input name="twitter" type="text" value="ross81"/>
+                        <label for="twitter"><i class="fa fa-instagram fa-fw" aria-hidden="true"></i></label>
+                        <input name="twitter" type="text" value="mike.ross"/>
+                    </div>
+                </div>
+            </div>
+            <div id="search">
+                <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
+                <input type="text" placeholder="Search contacts..."/>
+            </div>
+            <div id="contacts">
+                <ul>
+                    {% for chatroom in chatrooms %}
+                        <li class="contact" id="{{ chatroom.id }}">
+                            <div class="wrap">
+                                <span class="contact-status offline"></span>
+                                {% for user in chatroom.users.all %}
+                                    {% if user.username != current_user.username %}
+                                        <input class="chat_user" type="hidden" id="{{ user.id }}"
+                                               name="{{ user.username }}" value="{{ user.id }}">
+                                    {% endif %}
+                                {% endfor %}
+
+                                <img src="http://emilcarlsson.se/assets/louislitt.png" alt=""/>
+                                <div class="meta">
+                                    <p class="name">{{ chatroom.title }}</p>
+                                    <p class="preview">{{ chatroom.messages.last.content }}</p>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div id="bottom-bar">
+                <button id="addcontact"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>
+                    <a href="{% url "messenger:index" %}"><span>Add contact</span></a></button>
+                <button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span></button>
+            </div>
         </div>
-      </div>
-      <div class="messages">
-        <ul id="chat-log">
-        </ul>
-      </div>
-      <div class="message-input">
-        <div class="wrap">
-        <input id="chat-message-input" type="text" placeholder="Write your message..." />
-        <i class="fa fa-paperclip attachment" aria-hidden="true"></i>
-        <button id="chat-message-submit" class="submit">
-          <i class="fa fa-paper-plane" aria-hidden="true"></i>
-        </button>
+        <div class="content">
+            <div class="contact-profile">
+                <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt=""/>
+                <p>{{ username }}</p>
+                <div class="social-media">
+                    <i class="fa fa-facebook" aria-hidden="true"></i>
+                    <i class="fa fa-twitter" aria-hidden="true"></i>
+                    <i class="fa fa-instagram" aria-hidden="true"></i>
+                </div>
+            </div>
+            <div class="messages">
+                <ul id="chat-log">
+                </ul>
+            </div>
+            <div class="message-input">
+                <div class="wrap">
+                    <input id="chat-message-input" type="text" placeholder="Write your message..."/>
+                    <i class="fa fa-paperclip attachment" aria-hidden="true"></i>
+                    <button id="chat-message-submit" class="submit">
+                        <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-{{ room_id|json_script:"room-id" }}
-{{ current_user.username|json_script:"username" }}
-<script src="{% static 'js/reconnecting-websocket.min.js' %}"></script>
-<script src="{% static "js/messenger.js" %}"></script>
-<script src="{% static "js/messenger_socket.js" %}"></script>
+    {{ room_id|json_script:"room-id" }}
+    {{ current_user.username|json_script:"username" }}
+    {{ current_user.id|json_script:"user_id" }}
+    <script src="{% static 'js/reconnecting-websocket.min.js' %}"></script>
+    <script src="{% static "js/messenger.js" %}"></script>
+    <script src="{% static "js/messenger_socket.js" %}"></script>
+    <script src="{% static "js/channels/useronline_chanel.js" %}"></script>
 {% endblock %}

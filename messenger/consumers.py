@@ -1,7 +1,10 @@
 import json
-from asgiref.sync import async_to_sync
+from asgiref.sync import async_to_sync, sync_to_async
 from channels.generic.websocket import WebsocketConsumer
+from django.contrib.auth.models import User
 from django.utils import timezone
+
+from accounts.models import UserProfileInfo
 from .models import ChatRoom, Message
 
 
@@ -115,3 +118,114 @@ class MessengerConsumer(WebsocketConsumer):
         message = event['message']
         # Send message to WebSocket
         self.send(text_data=json.dumps(message))
+
+
+class UserOnlineConsumer(WebsocketConsumer):
+    def fetch_users(self, data):
+        users = User.objects.select_related("profile").all()
+        content = {
+            'command': 'fetch_users',
+            'users': self.users_to_json(users)
+        }
+        async_to_sync(self.send_message(content))
+        pass
+
+    def users_to_json(self, users):
+        result = []
+        for user in users:
+            result.append(self.user_to_json(user))
+        return result
+        pass
+
+    def user_to_json(self, user):
+        try:
+            return {
+                'id': user.id,
+                'username': user.username,
+                'online': str(user.profile.status)
+            }
+        except:
+            return {
+                'id': user.id,
+                'username': user.username,
+                'online': 'unknown'
+            }
+        pass
+
+    def new_user_online(self, data):
+        try:
+            UserProfileInfo.objects.filter(user_id=self.current_user.id).update(status=True)
+            content = {
+                'command': 'new_user_online',
+                'user': self.user_to_json(self.current_user)
+            }
+            return self.send_messenger_message(content)
+        except:
+            content = {
+                'command': 'new_user_online',
+                'user': self.user_to_json(self.current_user)
+            }
+            return self.send_messenger_message(content)
+
+
+
+    commands = {
+        "fetch_users": fetch_users,
+        "new_user_online": new_user_online,
+    }
+
+    def connect(self):
+        self.current_user = self.scope["user"]
+        self.room_group_name = "users_chanel"
+        if self.current_user.is_authenticated:
+            async_to_sync(self.channel_layer.group_add)(
+                self.room_group_name,
+                self.channel_name
+            )
+            self.accept()
+            self.new_user_online({})
+        else:
+            self.close()
+
+    def disconnect(self, close_code):
+        try:
+            current_user = self.scope['user']
+            self.update_user_status(current_user, False)
+            content = {
+                'command': 'new_user_offline',
+                'user': self.user_to_json(current_user)
+            }
+            return sync_to_async(self.send_messenger_message(content))
+        except:
+            pass
+        # Leave room group
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    def receive(self, text_data):
+        data = json.loads(text_data)
+        self.commands[data["command"]](self, data)
+
+    def send_messenger_message(self, message):
+        # Send message to room group
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': message
+            }
+        )
+
+    def send_message(self, message):
+        self.send(text_data=json.dumps(message))
+
+    # Receive message from room group
+    def chat_message(self, event):
+        message = event['message']
+        # Send message to WebSocket
+        self.send(text_data=json.dumps(message))
+
+    def update_user_status(self, user, status):
+        return UserProfileInfo.objects.filter(user_id=user.id).update(status=status)
