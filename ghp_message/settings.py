@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-
+import django_heroku
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -157,3 +157,6 @@ SOCIAL_AUTH_FACEBOOK_SECRET = 'c180a055a84a6baf37eba0dab9fe17e0'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '555076743854-vc0fuetopd3lqdtbfb5d9aas5mg9m4ki.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '_NZOO6i7veHJLfcc7-0GsWvN'
+
+
+django_heroku.settings(locals())
