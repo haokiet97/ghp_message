@@ -1,0 +1,12 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block extrahead %}
+    <link rel="stylesheet" href="{% static 'css/messenger.css' %}"/>
+{% endblock %}
+
+{% block content %}
+    <script src="{% static 'js/reconnecting-websocket.min.js' %}"></script>
+    <script src="{% static "js/messenger.js" %}"></script>
+    <script src="{% static "js/messenger_socket.js" %}"></script>
+    <script src="{% static "js/channels/useronline_chanel.js" %}"></script>
+{% endblock %}

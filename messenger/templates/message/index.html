@@ -1,26 +1,96 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8"/>
-    <title>Chat Rooms</title>
-</head>
-<body>
-    What chat room would you like to enter?<br>
-    <input id="room-name-input" type="text" size="100"><br>
-    <input id="room-name-submit" type="button" value="Enter">
+{% extends 'base/base.html' %}
+{% load static %}
+{% block extrahead %}
+    <link rel="stylesheet" href="{% static 'css/messenger.css' %}"/>
+    <style>
+        #frame #sidepanel {
+            float: none;
+            min-width: auto;
+            max-width: 100%;
+            width: auto;
+            height: 100%;
+            background: #2c3e50;
+            color: #f5f5f5;
+            overflow: hidden;
+            position: relative;
+        }
 
-    <script>
-        document.querySelector('#room-name-input').focus();
-        document.querySelector('#room-name-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#room-name-submit').click();
-            }
-        };
+        .navbar-nav{
+            display: block;
+        }
+    </style>
+{% endblock %}
 
-        document.querySelector('#room-name-submit').onclick = function(e) {
-            var roomName = document.querySelector('#room-name-input').value;
-            window.location.pathname = '/messenger/' + roomName + '/';
-        };
-    </script>
-</body>
-</html>
+{% block content %}
+
+
+    <div class="container">
+        <div id="frame">
+            <div id="sidepanel">
+                <div id="profile">
+                    <div class="wrap">
+                        <img id="profile-img" src="http://emilcarlsson.se/assets/mikeross.png" class="online" alt=""/>
+                        <p>{{ current_user.username }}</p>
+                        <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
+                        <div id="status-options">
+                            <ul>
+                                <li id="status-online" class="active"><span class="status-circle"></span>
+                                    <p>Online</p></li>
+                                <li id="status-away"><span class="status-circle"></span>
+                                    <p>Away</p></li>
+                                <li id="status-busy"><span class="status-circle"></span>
+                                    <p>Busy</p></li>
+                                <li id="status-offline"><span class="status-circle"></span>
+                                    <p>Offline</p></li>
+                            </ul>
+                        </div>
+                        <div id="expanded">
+                            <label for="twitter"><i class="fa fa-facebook fa-fw" aria-hidden="true"></i></label>
+                            <input name="twitter" type="text" value="mikeross"/>
+                            <label for="twitter"><i class="fa fa-twitter fa-fw" aria-hidden="true"></i></label>
+                            <input name="twitter" type="text" value="ross81"/>
+                            <label for="twitter"><i class="fa fa-instagram fa-fw" aria-hidden="true"></i></label>
+                            <input name="twitter" type="text" value="mike.ross"/>
+                        </div>
+                    </div>
+                </div>
+                <div id="search">
+                    <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
+                    <input type="text" placeholder="Search contacts..."/>
+                </div>
+                <div id="contacts">
+                    <ul>
+                        {% for user in users %}
+                            <a href="{% url "messenger:room_create" user.id %}">
+                                <li class="contact" >
+                                <div class="wrap">
+                                    <span class="contact-status offline"></span>
+                                    <input class="chat_user" type="hidden" id="{{ user.id }}"
+                                           name="{{ user.username }}" value="{{ user.id }}">
+                                    <img src="http://emilcarlsson.se/assets/louislitt.png" alt=""/>
+                                    <div class="meta">
+                                        <p class="name">{{ user.username }}</p>
+                                        <p class="preview">preview</p>
+                                    </div>
+                                </div>
+                            </li>
+                            </a>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div id="bottom-bar">
+                    <button id="addcontact"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>
+                        <span>Add contact</span></button>
+                    <button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ current_user.username|json_script:"username" }}
+    {{ current_user.id|json_script:"user_id" }}
+    <script src="{% static 'js/reconnecting-websocket.min.js' %}"></script>
+    <script src="{% static "js/messenger.js" %}"></script>
+    <script src="{% static "js/channels/useronline_chanel.js" %}"></script>
+{% endblock %}

@@ -1,11 +1,11 @@
 body {
-    display: flex;
+    /*display: flex;*/
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
-    background: #27ae60;
+    /*min-height: 100vh;*/
+    /*background: #27ae60;*/
     font-family: "proxima-nova", "Source Sans Pro", sans-serif;
-    font-size: 1em;
+    /*font-size: 1em;*/
     letter-spacing: 0.1px;
     color: #32465a;
     text-rendering: optimizeLegibility;

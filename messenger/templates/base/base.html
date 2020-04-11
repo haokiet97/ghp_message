@@ -25,7 +25,28 @@
 </head>
 
 <body>
-{% block content %}
-{% endblock %}
+<nav class="navbar navbar-default navbar-static-top">
+    <div class="container">
+        <ul class="nav navbar-nav">
+            <li><a class="navbar-brand" href="{% url 'accounts:index' %}">GHP-Messenger</a></li>
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'accounts:userprofileinfo_detail' user.id %}">{{ user }}</a></li>
+                <li><a href="{% url 'messenger:rooms' %}">Messenger</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+            {% else %}
+                <li><a class="navbar-link" href="{% url 'accounts:sign-up' %}">Register</a></li>
+                <li><a class="navbar-link" href="{% url 'accounts:user_login' %}">Login</a></li>
+                <li><a class="navbar-link" href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">Login with
+                    facebook</a></li>
+                <li><a class="navbar-link" href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}">Login
+                    with Google</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+<div class="container">
+    {% block content %}
+    {% endblock %}
+</div>
 </body>
 </html>
