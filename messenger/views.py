@@ -11,7 +11,7 @@ from .models import Message, ChatRoom
 
 User = get_user_model()
 
-
+@login_required
 def index(request):
     current_user = request.user
     users = User.objects.select_related('profile').all()
@@ -37,14 +37,12 @@ def create_room(request, user_id):
     own_user = request.user
     chat_room = ChatRoom.objects.create(title=f'{user.username}, {own_user.username}')
     try:
-        with transaction.atomic():
-            chat_room.save()
-            chat_room.users.add(own_user, user)
+        chat_room.save()
+        chat_room.users.add(own_user, user)
     except IntegrityError:
-        ChatRoom.objects.filter(id=chat_room.id).delete()
-        return redirect("messenger:rooms")
+        return redirect("messenger:index")
 
-    return redirect("messenger:index")
+    return redirect("messenger:rooms")
 
 
 def room_add_user(request, room_id, user_id):
