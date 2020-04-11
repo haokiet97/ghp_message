@@ -11,7 +11,7 @@ from .models import Message, ChatRoom
 
 User = get_user_model()
 
-
+@login_required
 def index(request):
     current_user = request.user
     users = User.objects.select_related('profile').all()
