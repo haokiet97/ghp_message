@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-
+import django_heroku
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -92,11 +92,10 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
         },
     },
 }
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -145,6 +144,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR,'static/')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
@@ -157,3 +157,6 @@ SOCIAL_AUTH_FACEBOOK_SECRET = 'c180a055a84a6baf37eba0dab9fe17e0'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '555076743854-vc0fuetopd3lqdtbfb5d9aas5mg9m4ki.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '_NZOO6i7veHJLfcc7-0GsWvN'
+
+
+django_heroku.settings(locals())

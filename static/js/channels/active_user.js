@@ -1,5 +1,7 @@
 $(function(){
-  endpoint = 'ws://' + window.location.host + "/ws/accounts/"
+  let sk_protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+
+  endpoint = sk_protocol + '//' + window.location.host + "/ws/accounts/";
   var socket =  new ReconnectingWebSocket(endpoint)
   
   socket.onopen = function(e){
