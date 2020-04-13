@@ -1,1 +1,1 @@
-web: gunicorn ghp_message.wsgi
+web: gunicorn ghp_message.asgi
