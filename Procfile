@@ -1,1 +1,2 @@
-web: gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 app:app
+release: python manage.py migrate --noinput
+web: daphne ghp_message.asgi:application --port $PORT --bind 0.0.0.0
