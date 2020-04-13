@@ -1,6 +1,6 @@
 $(function(){
   endpoint = 'ws://' + window.location.host + "/ws/accounts/"
-  var socket =  new ReconnectingWebSocket(endpoint)
+  var socket =  new WebSocket(endpoint)
   
   socket.onopen = function(e){
     console.log("Ping");

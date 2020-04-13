@@ -11,7 +11,7 @@ $(function () {
 
     $(list_contacts).each(function (index, item) {
         let room_id = $(item).attr('id');
-        let chatSocket = new ReconnectingWebSocket(
+        let chatSocket = new WebSocket(
             sk_protocol + '//'
             + window.location.host
             + '/ws/messenger/rooms/'
@@ -67,7 +67,7 @@ $(function () {
         //clear messages
         $('.content .messages #chat-log').html('');
         if (dict_chatsocket.get(room_id) == null) {
-            let chatSocket = new ReconnectingWebSocket(
+            let chatSocket = new WebSocket(
                 sk_protocol + '//'
                 + window.location.host
                 + '/ws/messenger/rooms/'
@@ -79,7 +79,7 @@ $(function () {
         } else {
             let old_connect = dict_chatsocket.get(room_id);
             old_connect.close();
-            let chatSocket = new ReconnectingWebSocket(
+            let chatSocket = new WebSocket(
                 sk_protocol + '//'
                 + window.location.host
                 + '/ws/messenger/rooms/'

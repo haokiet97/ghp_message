@@ -1,6 +1,6 @@
 $(function () {
     let sk_protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    var userSocket = new ReconnectingWebSocket(
+    var userSocket = new WebSocket(
         sk_protocol + '//'
         + window.location.host
         + '/ws/messenger/users/'
