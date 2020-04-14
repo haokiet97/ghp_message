@@ -23,8 +23,12 @@ sudo pip3 install virtualenv
 ```
 ### Sqlite3
 search google nha
-
+```shell script
+sudo apt update
+sudo apt-get install sqlite3
+```
 ### Mysql
+"Không cần thiết"
 
 ```shell script
 sudo apt-get install mysql-server
@@ -62,7 +66,19 @@ virtualenv --python=python3.6 venv
 source venv/bin/activate
 pip install -r requirements.txt
 python manage.py migrate
-python manage_local.py runserver
+python manage.py runserver
+```
+Hoăc có thể dùng daphne:
+```shell script
+virtualenv --python=python3.6 venv
+source venv/bin/activate
+pip install -r requirements.txt
+sudo apt update
+sudo apt install daphne
+#Trong thư mục project
+source venv/bin/activate
+#run server với daphne
+daphne ghp_message.asgi:application --port <port tùy thích, mặc định 8000>
 ```
 
 ### Chú ý:
